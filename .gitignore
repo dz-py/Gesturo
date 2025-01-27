@@ -1,7 +1,7 @@
 Desktop/__pychache__/
-Gesturo/AppDelegate.swift
-Gesturo/Assets.xcassets/
-Gesturo/Base.lproj/
-Gesturo/Info.plist
+Gesturo/Gesturo/AppDelegate.swift
+Gesturo/Gesturo/Assets.xcassets/
+Gesturo/Gesturo/Base.lproj/
+Gesturo/Gesturo/Info.plist
 .gitignore
 venv/ 
