@@ -3,3 +3,5 @@ Gesturo/AppDelegate.swift
 Gesturo/Assets.xcassets/
 Gesturo/Base.lproj/
 Gesturo/Info.plist
+.gitignore
+venv/ 
