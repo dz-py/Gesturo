@@ -1,6 +1,6 @@
 import asyncio
 from websocket_server import WebSocketServer
-from cursor_controller import CursorController  # Ensure this import is correct
+from cursor_controller import CursorController 
 
 class GesturoServer(WebSocketServer):
     def __init__(self, cursor_controller, *args, **kwargs):

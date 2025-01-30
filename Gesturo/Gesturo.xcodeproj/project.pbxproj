@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AB729C002D4887E1004D3F13 /* SwiftDotenv in Frameworks */ = {isa = PBXBuildFile; productRef = AB729BFF2D4887E1004D3F13 /* SwiftDotenv */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AB5465D62D46F81600E7517A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB729C002D4887E1004D3F13 /* SwiftDotenv in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = Gesturo;
 			packageProductDependencies = (
+				AB729BFF2D4887E1004D3F13 /* SwiftDotenv */,
 			);
 			productName = Gesturo;
 			productReference = AB5465C52D46F81500E7517A /* Gesturo.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = AB5465BC2D46F81500E7517A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AB729BFE2D4887E0004D3F13 /* XCRemoteSwiftPackageReference "swift-dotenv" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AB5465C62D46F81500E7517A /* Products */;
 			projectDirPath = "";
@@ -571,6 +580,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AB729BFE2D4887E0004D3F13 /* XCRemoteSwiftPackageReference "swift-dotenv" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/thebarndog/swift-dotenv.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB729BFF2D4887E1004D3F13 /* SwiftDotenv */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AB729BFE2D4887E0004D3F13 /* XCRemoteSwiftPackageReference "swift-dotenv" */;
+			productName = SwiftDotenv;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AB5465BD2D46F81500E7517A /* Project object */;
 }

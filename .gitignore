@@ -4,3 +4,5 @@ Gesturo/Gesturo/Base.lproj/
 Gesturo/Gesturo/Info.plist
 .gitignore
 venv/ 
+.env/
+__pychache__/
