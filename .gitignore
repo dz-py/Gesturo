@@ -1,8 +1,7 @@
 Desktop/__pychache__/
 Gesturo/Gesturo/Assets.xcassets/
 Gesturo/Gesturo/Base.lproj/
-Gesturo/Gesturo/Info.plist/
-Gesturo/Gesturo.xcodeproj/
+Gesturo/Gesturo/Info.plist
 .gitignore
 venv/ 
 .env/
