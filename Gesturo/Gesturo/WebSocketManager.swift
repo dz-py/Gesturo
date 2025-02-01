@@ -3,7 +3,7 @@ import Combine
 
 class WebSocketManager: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
-    private let url = URL(string: "ws://169.254.90.114:5007")!
+    private let url = URL(string: "ws://192.168.12.211:5007")!
     private let encoder = JSONEncoder()
     
     struct MessageData: Codable {

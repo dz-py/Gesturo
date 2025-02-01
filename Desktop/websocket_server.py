@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import ujson  
 import uvloop  
+import time
 
 # uvloop for better async performance
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())  
@@ -16,9 +17,11 @@ class WebSocketServer:
         self.delta_x_buffer = 0  # Accumulate X movements
         self.delta_y_buffer = 0  # Accumulate Y movements
         self.lock = asyncio.Lock()  # Prevent race conditions
-        self.max_delta = 7  # Maximum amount to move at once
-        self.sensitivity_factor = 1.2  # Adjusted sensitivity factor
-        
+        self.max_delta = 8  # Maximum amount to move at once
+        self.sensitivity_factor = 0.8  # Adjusted sensitivity factor
+        self.friction = 0.0006  # Friction to slow down cursor
+        self.last_activity = time.time()  # Track last gesture time
+
         self.mouse = Controller()  
 
     async def handle_connection(self, websocket):
@@ -40,7 +43,7 @@ class WebSocketServer:
             async with self.lock: 
                 # Handle batched movements 
                 if isinstance(data, list):  
-                    for movement in data:
+                    for movement in data: 
                         self.delta_x_buffer += movement.get("deltaX", 0)
                         self.delta_y_buffer += movement.get("deltaY", 0)
                 elif isinstance(data, dict): 
@@ -55,21 +58,26 @@ class WebSocketServer:
         """ Moves the cursor every few milliseconds using the accumulated buffer. """
         while True:
             if abs(self.delta_x_buffer) > 0 or abs(self.delta_y_buffer) > 0:
-                # Limit movement to avoid excessive jumps
-                delta_x = max(min(self.delta_x_buffer, self.max_delta), -self.max_delta)
-                delta_y = max(min(self.delta_y_buffer, self.max_delta), -self.max_delta)
+                small_move_threshold = 2  # Below this, we reduce sensitivity
+                sensitivity = self.sensitivity_factor
 
-                # Scale movement for sensitivity
-                scaled_delta_x = delta_x * self.sensitivity_factor
-                scaled_delta_y = delta_y * self.sensitivity_factor
+                # Reduce sensitivity for very small movements
+                if abs(self.delta_x_buffer) < small_move_threshold:
+                    sensitivity = 0.8  # Lower sensitivity for small moves
+                if abs(self.delta_y_buffer) < small_move_threshold:
+                    sensitivity = 0.8
 
-                print(f"Moving cursor ΔX: {scaled_delta_x}, ΔY: {scaled_delta_y}")  
-                self.mouse.move(scaled_delta_x, scaled_delta_y) 
+                delta_x = self.delta_x_buffer * sensitivity
+                delta_y = self.delta_y_buffer * sensitivity
 
-                self.delta_x_buffer = 0
-                self.delta_y_buffer = 0
+                self.mouse.move(delta_x, delta_y)  
 
-            await asyncio.sleep(0.001)  
+                # Apply friction for smooth stopping
+                self.delta_x_buffer *= self.friction
+                self.delta_y_buffer *= self.friction
+
+            await asyncio.sleep(0.001)
+
 
     async def start(self):
         server = await websockets.serve(self.handle_connection, self.host, self.port, ping_interval=None)

@@ -4,6 +4,7 @@ class GestureHandler: ObservableObject {
     private var webSocketManager = WebSocketManager()
     private var messageQueue: [WebSocketManager.MessageData] = []
     private var timer: Timer?
+    private var lastSwipeTime: TimeInterval = 0
 
     init() {
         webSocketManager.connect()
@@ -11,15 +12,26 @@ class GestureHandler: ObservableObject {
     }
 
     func handleSwipe(deltaX: CGFloat, deltaY: CGFloat) {
-        print("Swipe detected: deltaX=\(deltaX), deltaY=\(deltaY)")
-        
+        let deadZone: CGFloat = 0.5  // Ignore tiny unintended movements
+        let smallMoveThreshold: CGFloat = 1500  // Threshold for scaling small moves
+
+        var adjustedDeltaX = abs(deltaX) > deadZone ? deltaX : 0
+        var adjustedDeltaY = abs(deltaY) > deadZone ? deltaY : 0
+
+        // Reduce sensitivity for small movements
+        if abs(adjustedDeltaX) < smallMoveThreshold {
+            adjustedDeltaX *= 0.2
+        }
+        if abs(adjustedDeltaY) < smallMoveThreshold {
+            adjustedDeltaY *= 0.2
+        }
+
         let messageData = WebSocketManager.MessageData(
-            deltaX: Float(deltaX),
-            deltaY: Float(deltaY),
-            //timesend: Int64(Date().timeIntervalSince1970 * 1000)
+            deltaX: Float(adjustedDeltaX),
+            deltaY: Float(adjustedDeltaY)
         )
-        
-        messageQueue.append(messageData) // Add to batch queue
+
+        messageQueue.append(messageData)
     }
 
     private func startBatching() {
@@ -29,6 +41,10 @@ class GestureHandler: ObservableObject {
                 self.messageQueue.removeAll()
             }
         }
+    }
+
+    func stopSending() {
+        webSocketManager.sendBatch(messages: [WebSocketManager.MessageData(deltaX: 0, deltaY: 0)])
     }
 
     deinit {
