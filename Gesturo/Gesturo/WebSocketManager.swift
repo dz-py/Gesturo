@@ -6,10 +6,18 @@ class WebSocketManager: ObservableObject {
     private let url = URL(string: "ws://192.168.12.211:5007")!
     private let encoder = JSONEncoder()
     
+    enum GestureType: String, Codable {
+        case move
+        case leftClick
+        case rightClick
+        case scroll
+    }
+    
     struct MessageData: Codable {
+        let type: GestureType
         let deltaX: Float
         let deltaY: Float
-        //let timesend: Int64
+        let fingers: Int?
     }
 
     func connect() {

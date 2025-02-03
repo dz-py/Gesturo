@@ -4,33 +4,73 @@ class GestureHandler: ObservableObject {
     private var webSocketManager = WebSocketManager()
     private var messageQueue: [WebSocketManager.MessageData] = []
     private var timer: Timer?
-    private var lastSwipeTime: TimeInterval = 0
-
+    private var lastTapTime: TimeInterval = 0
+    private var tapCount = 0
+    private let doubleTapTimeThreshold = 0.3
+    
     init() {
         webSocketManager.connect()
         startBatching()
     }
-
-    func handleSwipe(deltaX: CGFloat, deltaY: CGFloat) {
-        let deadZone: CGFloat = 0.5  // Ignore tiny unintended movements
-        let smallMoveThreshold: CGFloat = 1500  // Threshold for scaling small moves
-
+    
+    func handleTap(fingers: Int) {
+        let currentTime = Date().timeIntervalSince1970
+        
+        if fingers == 1 {
+            // Single tap (left click)
+            let messageData = WebSocketManager.MessageData(
+                type: .leftClick,
+                deltaX: 0,
+                deltaY: 0,
+                fingers: 1
+            )
+            messageQueue.append(messageData)
+        } else if fingers == 2 {
+            // Two-finger tap (right click)
+            let messageData = WebSocketManager.MessageData(
+                type: .rightClick,
+                deltaX: 0,
+                deltaY: 0,
+                fingers: 2
+            )
+            messageQueue.append(messageData)
+        }
+    }
+    
+    func handleSwipe(deltaX: CGFloat, deltaY: CGFloat, fingers: Int) {
+        let deadZone: CGFloat = 0.5
+        let smallMoveThreshold: CGFloat = 10
+        
         var adjustedDeltaX = abs(deltaX) > deadZone ? deltaX : 0
         var adjustedDeltaY = abs(deltaY) > deadZone ? deltaY : 0
-
-        // Reduce sensitivity for small movements
+        
         if abs(adjustedDeltaX) < smallMoveThreshold {
-            adjustedDeltaX *= 0.2
+            adjustedDeltaX *= 0.4
         }
         if abs(adjustedDeltaY) < smallMoveThreshold {
-            adjustedDeltaY *= 0.2
+            adjustedDeltaY *= 0.4
         }
-
-        let messageData = WebSocketManager.MessageData(
-            deltaX: Float(adjustedDeltaX),
-            deltaY: Float(adjustedDeltaY)
-        )
-
+        
+        let messageData: WebSocketManager.MessageData
+        if fingers == 1 {
+            messageData = WebSocketManager.MessageData(
+                type: .move,
+                deltaX: Float(adjustedDeltaX),
+                deltaY: Float(adjustedDeltaY),
+                fingers: 1
+            )
+        } else if fingers == 2 {
+            // Two-finger scroll - Adjust sensitivity for scrolling
+            messageData = WebSocketManager.MessageData(
+                type: .scroll,
+                deltaX: Float(adjustedDeltaX),
+                deltaY: Float(adjustedDeltaY),
+                fingers: 2
+            )
+        } else {
+            return
+        }
+        
         messageQueue.append(messageData)
     }
 
@@ -44,8 +84,15 @@ class GestureHandler: ObservableObject {
     }
 
     func stopSending() {
-        webSocketManager.sendBatch(messages: [WebSocketManager.MessageData(deltaX: 0, deltaY: 0)])
-    }
+            // Send a final message to stop movement
+            let messageData = WebSocketManager.MessageData(
+                type: .move,
+                deltaX: 0,
+                deltaY: 0,
+                fingers: 1
+            )
+            webSocketManager.sendBatch(messages: [messageData])
+        }
 
     deinit {
         timer?.invalidate()

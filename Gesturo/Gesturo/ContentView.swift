@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var gestureHandler = GestureHandler()
-    @State private var touchLocation = CGPoint.zero
     
     var body: some View {
         VStack {
@@ -15,21 +14,17 @@ struct ContentView: View {
                         .stroke(Color.gray.opacity(0.4), lineWidth: 2)
                 )
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
-                .frame(width: 300, height: 300)
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            let deltaX = value.translation.width
-                            let deltaY = value.translation.height
-                            gestureHandler.handleSwipe(deltaX: deltaX, deltaY: deltaY)
-                        }
+                .overlay(
+                    TouchpadView(gestureHandler: gestureHandler)
                 )
+                .frame(width: 300, height: 300)
             
             Spacer()
             
-            Text("Swipe within the touchpad to move cursor")
+            Text("Tap = Left Click | Two-Finger Tap = Right Click\nTwo-Finger Swipe = Scroll")
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
                 .padding(.bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
