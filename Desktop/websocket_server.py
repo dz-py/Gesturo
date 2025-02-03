@@ -18,9 +18,9 @@ class WebSocketServer:
         self.scroll_y_buffer = 0        # Accumulate Y scrolling
         self.lock = asyncio.Lock()      # Prevent race conditions
         self.max_delta = 20             # Maximum amount to move at once
-        self.sensitivity_factor = 3.2   # Adjusted sensitivity factor
-        self.scroll_sensitivity = 0.3   # Adjusted scrolling sensitivity factor 
-        self.friction = 0.001           # Momentum effect (lower = more friction)
+        self.sensitivity_factor = 3.5   # Adjusted sensitivity factor
+        self.scroll_sensitivity = 0.8   # Adjusted scrolling sensitivity factor 
+        self.friction = 0.005           # Momentum effect (lower = more friction)
         
         self.mouse = Controller()
 
@@ -71,18 +71,24 @@ class WebSocketServer:
         while True:
             # Handle cursor movement
             if abs(self.delta_x_buffer) > 0 or abs(self.delta_y_buffer) > 0:
-                small_move_threshold = 2
+                small_move_threshold = 7
                 sensitivity = self.sensitivity_factor
 
                 if abs(self.delta_x_buffer) < small_move_threshold:
-                    sensitivity = 0.8
+                    sensitivity = 0.5
                 if abs(self.delta_y_buffer) < small_move_threshold:
-                    sensitivity = 0.8
+                    sensitivity = 0.5
 
-                delta_x = self.delta_x_buffer * sensitivity
-                delta_y = self.delta_y_buffer * sensitivity
+                total_delta = (abs(self.delta_x_buffer) + abs(self.delta_y_buffer))
+                sensitivity = self.sensitivity_factor
 
-                self.mouse.move(delta_x, delta_y)
+                # Normalize diagonal movement
+                if total_delta > 0:
+                    delta_x = self.delta_x_buffer * sensitivity * (abs(self.delta_x_buffer) / total_delta)
+                    delta_y = self.delta_y_buffer * sensitivity * (abs(self.delta_y_buffer) / total_delta)
+
+                    self.mouse.move(delta_x, delta_y)
+
 
                 self.delta_x_buffer *= self.friction
                 self.delta_y_buffer *= self.friction

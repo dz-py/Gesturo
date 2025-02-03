@@ -39,16 +39,16 @@ class GestureHandler: ObservableObject {
     
     func handleSwipe(deltaX: CGFloat, deltaY: CGFloat, fingers: Int) {
         let deadZone: CGFloat = 0.5
-        let smallMoveThreshold: CGFloat = 10
+        let smallMoveThreshold: CGFloat = 7
         
         var adjustedDeltaX = abs(deltaX) > deadZone ? deltaX : 0
         var adjustedDeltaY = abs(deltaY) > deadZone ? deltaY : 0
         
         if abs(adjustedDeltaX) < smallMoveThreshold {
-            adjustedDeltaX *= 0.4
+            adjustedDeltaX *= 0.5
         }
         if abs(adjustedDeltaY) < smallMoveThreshold {
-            adjustedDeltaY *= 0.4
+            adjustedDeltaY *= 0.5
         }
         
         let messageData: WebSocketManager.MessageData
