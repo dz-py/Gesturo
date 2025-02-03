@@ -12,16 +12,15 @@ class WebSocketServer:
         self.port = port
         self.clients = set()
         
-        self.delta_x_buffer = 0
-        self.delta_y_buffer = 0
-        self.scroll_x_buffer = 0
-        self.scroll_y_buffer = 0
-        self.lock = asyncio.Lock()
-        
-        self.max_delta = 20
-        self.sensitivity_factor = 3.2
-        self.scroll_sensitivity = 0.3
-        self.friction = 0.001
+        self.delta_x_buffer = 0         # Accumulate X movements
+        self.delta_y_buffer = 0         # Accumulate Y movements
+        self.scroll_x_buffer = 0        # Accumulate X scrolling
+        self.scroll_y_buffer = 0        # Accumulate Y scrolling
+        self.lock = asyncio.Lock()      # Prevent race conditions
+        self.max_delta = 20             # Maximum amount to move at once
+        self.sensitivity_factor = 3.2   # Adjusted sensitivity factor
+        self.scroll_sensitivity = 0.3   # Adjusted scrolling sensitivity factor 
+        self.friction = 0.001           # Momentum effect (lower = more friction)
         
         self.mouse = Controller()
 
