@@ -26,6 +26,13 @@ struct TouchpadView: UIViewRepresentable {
         twoFingerTapGesture.numberOfTapsRequired = 1
         view.addGestureRecognizer(twoFingerTapGesture)
         
+        // Double tap gesture for double click
+        let doubleTapGesture = UITapGestureRecognizer(target: context.coordinator, action:
+            #selector(Coordinator.handleTap(_:)))
+        doubleTapGesture.numberOfTouchesRequired = 1
+        doubleTapGesture.numberOfTapsRequired = 2
+        view.addGestureRecognizer(doubleTapGesture)
+        
         return view
     }
     
@@ -69,7 +76,10 @@ struct TouchpadView: UIViewRepresentable {
         }
         
         @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-            gestureHandler.handleTap(fingers: gesture.numberOfTouchesRequired)
-        }
+                    gestureHandler.handleTap(
+                        fingers: gesture.numberOfTouchesRequired,
+                        tapCount: gesture.numberOfTapsRequired
+                    )
+                }
     }
 }

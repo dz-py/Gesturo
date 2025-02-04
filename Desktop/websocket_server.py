@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import ujson
 import uvloop
+import time
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -66,6 +67,9 @@ class WebSocketServer:
         
         elif gesture_type == "rightClick":
             self.mouse.click(Button.right)
+
+        elif gesture_type == "doubleClick":
+            self.mouse.click(Button.left, 2)
 
     async def move_cursor_periodically(self):
         while True:

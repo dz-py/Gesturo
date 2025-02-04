@@ -3,7 +3,7 @@ import Combine
 
 class WebSocketManager: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
-    private let url = URL(string: "ws://169.254.213.33:5007")!
+    private let url = URL(string: "ws://169.254.210.114:5007")!
     private let encoder = JSONEncoder()
     
     enum GestureType: String, Codable {
@@ -11,6 +11,7 @@ class WebSocketManager: ObservableObject {
         case leftClick
         case rightClick
         case scroll
+        case doubleClick
     }
     
     struct MessageData: Codable {

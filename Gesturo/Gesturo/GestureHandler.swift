@@ -13,29 +13,37 @@ class GestureHandler: ObservableObject {
         startBatching()
     }
     
-    func handleTap(fingers: Int) {
-        let currentTime = Date().timeIntervalSince1970
-        
-        if fingers == 1 {
-            // Single tap (left click)
-            let messageData = WebSocketManager.MessageData(
-                type: .leftClick,
-                deltaX: 0,
-                deltaY: 0,
-                fingers: 1
-            )
-            messageQueue.append(messageData)
-        } else if fingers == 2 {
-            // Two-finger tap (right click)
-            let messageData = WebSocketManager.MessageData(
-                type: .rightClick,
-                deltaX: 0,
-                deltaY: 0,
-                fingers: 2
-            )
+    func handleTap(fingers: Int, tapCount: Int = 1) {
+            let messageData: WebSocketManager.MessageData
+            
+            switch (fingers, tapCount) {
+            case (1, 1):  // Single tap
+                messageData = WebSocketManager.MessageData(
+                    type: .leftClick,
+                    deltaX: 0,
+                    deltaY: 0,
+                    fingers: 1
+                )
+            case (1, 2):  // Double tap
+                messageData = WebSocketManager.MessageData(
+                    type: .doubleClick,
+                    deltaX: 0,
+                    deltaY: 0,
+                    fingers: 1
+                )
+            case (2, 1):  // Two-finger tap
+                messageData = WebSocketManager.MessageData(
+                    type: .rightClick,
+                    deltaX: 0,
+                    deltaY: 0,
+                    fingers: 2
+                )
+            default:
+                return
+            }
+            
             messageQueue.append(messageData)
         }
-    }
     
     func handleSwipe(deltaX: CGFloat, deltaY: CGFloat, fingers: Int) {
         let deadZone: CGFloat = 0.5
