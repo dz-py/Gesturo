@@ -3,6 +3,7 @@ Gesturo/Gesturo/Assets.xcassets/
 Gesturo/Gesturo/Base.lproj/
 Gesturo/Gesturo/Info.plist
 Gesturo/Gesturo.xcodeproj/
+Gesturo/.DS_Store
 .gitignore
 venv/ 
 .env/
