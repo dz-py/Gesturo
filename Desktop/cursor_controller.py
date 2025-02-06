@@ -1,10 +1,13 @@
 import json
-import pyautogui
+from pynput.mouse import Controller
 
 class CursorController:
     
+    def __init__(self):
+        self.mouse = Controller()
+
     def move_cursor(self, delta_x, delta_y):
-        pyautogui.move(delta_x, delta_y)
+        self.mouse.move(delta_x, delta_y)
 
     def handle_message(self, message):
         try:
