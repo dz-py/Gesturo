@@ -7,3 +7,4 @@ Gesturo/Gesturo.xcodeproj/
 venv/ 
 .env/
 __pychache__/
+.DS_Store
