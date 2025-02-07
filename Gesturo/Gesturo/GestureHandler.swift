@@ -14,40 +14,45 @@ class GestureHandler: ObservableObject {
     }
     
     func handleTap(fingers: Int, tapCount: Int = 1) {
-            let messageData: WebSocketManager.MessageData
+        let messageData: WebSocketManager.MessageData
+        let currentTime = Date().timeIntervalSince1970 * 1000 // Current time in milliseconds
             
-            switch (fingers, tapCount) {
-            case (1, 1):  // Single tap
-                messageData = WebSocketManager.MessageData(
-                    type: .leftClick,
-                    deltaX: 0,
-                    deltaY: 0,
-                    fingers: 1
-                )
-            case (1, 2):  // Double tap
-                messageData = WebSocketManager.MessageData(
-                    type: .doubleClick,
-                    deltaX: 0,
-                    deltaY: 0,
-                    fingers: 1
-                )
-            case (2, 1):  // Two-finger tap
-                messageData = WebSocketManager.MessageData(
-                    type: .rightClick,
-                    deltaX: 0,
-                    deltaY: 0,
-                    fingers: 2
-                )
-            default:
-                return
-            }
-            
-            messageQueue.append(messageData)
+        switch (fingers, tapCount) {
+        case (1, 1):  // Single tap
+            messageData = WebSocketManager.MessageData(
+                type: .leftClick,
+                deltaX: 0,
+                deltaY: 0,
+                fingers: 1,
+                sendTime: currentTime
+            )
+        case (1, 2):  // Double tap
+            messageData = WebSocketManager.MessageData(
+                type: .doubleClick,
+                deltaX: 0,
+                deltaY: 0,
+                fingers: 1,
+                sendTime: currentTime
+            )
+        case (2, 1):  // Two-finger tap
+            messageData = WebSocketManager.MessageData(
+                type: .rightClick,
+                deltaX: 0,
+                deltaY: 0,
+                fingers: 2,
+                sendTime: currentTime
+            )
+        default:
+            return
         }
+            
+        messageQueue.append(messageData)
+    }
     
     func handleSwipe(deltaX: CGFloat, deltaY: CGFloat, fingers: Int) {
         let deadZone: CGFloat = 0.5
         let smallMoveThreshold: CGFloat = 7
+        let currentTime = Date().timeIntervalSince1970 * 1000 // Current time in milliseconds
         
         var adjustedDeltaX = abs(deltaX) > deadZone ? deltaX : 0
         var adjustedDeltaY = abs(deltaY) > deadZone ? deltaY : 0
@@ -65,7 +70,8 @@ class GestureHandler: ObservableObject {
                 type: .move,
                 deltaX: Float(adjustedDeltaX),
                 deltaY: Float(adjustedDeltaY),
-                fingers: 1
+                fingers: 1,
+                sendTime: currentTime
             )
         } else if fingers == 2 {
             // Two-finger scroll - Adjust sensitivity for scrolling
@@ -73,7 +79,8 @@ class GestureHandler: ObservableObject {
                 type: .scroll,
                 deltaX: Float(adjustedDeltaX),
                 deltaY: Float(adjustedDeltaY),
-                fingers: 2
+                fingers: 2,
+                sendTime: currentTime
             )
         } else {
             return
@@ -92,15 +99,16 @@ class GestureHandler: ObservableObject {
     }
 
     func stopSending() {
-            // Send a final message to stop movement
-            let messageData = WebSocketManager.MessageData(
-                type: .move,
-                deltaX: 0,
-                deltaY: 0,
-                fingers: 1
-            )
-            webSocketManager.sendBatch(messages: [messageData])
-        }
+        // Send a final message to stop movement
+        let messageData = WebSocketManager.MessageData(
+            type: .move,
+            deltaX: 0,
+            deltaY: 0,
+            fingers: 1,
+            sendTime: Date().timeIntervalSince1970 * 1000
+        )
+        webSocketManager.sendBatch(messages: [messageData])
+    }
 
     deinit {
         timer?.invalidate()

@@ -3,7 +3,7 @@ import Combine
 
 class WebSocketManager: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
-    private let url = URL(string: "ws://169.254.110.232:5007")!
+    private let url = URL(string: "ws://169.254.206.14:5007")!
     private let encoder = JSONEncoder()
     
     enum GestureType: String, Codable {
@@ -19,6 +19,7 @@ class WebSocketManager: ObservableObject {
         let deltaX: Float
         let deltaY: Float
         let fingers: Int?
+        let sendTime: Double
     }
 
     func connect() {
@@ -32,8 +33,19 @@ class WebSocketManager: ObservableObject {
     }
 
     func sendBatch(messages: [MessageData]) {
+        var timestampedMessages = messages.map { message in
+            // Add current timestamp to each message
+            MessageData(
+                type: message.type,
+                deltaX: message.deltaX,
+                deltaY: message.deltaY,
+                fingers: message.fingers,
+                sendTime: Date().timeIntervalSince1970 * 1000 // Convert to milliseconds
+            )
+        }
+        
         do {
-            let jsonData = try encoder.encode(messages)
+            let jsonData = try encoder.encode(timestampedMessages)
             let message = URLSessionWebSocketTask.Message.data(jsonData)
             webSocketTask?.send(message) { error in
                 if let error = error {
@@ -44,6 +56,7 @@ class WebSocketManager: ObservableObject {
             print("JSON Encoding Error: \(error)")
         }
     }
+
 
     func disconnect() {
         webSocketTask?.cancel(with: .goingAway, reason: nil)
