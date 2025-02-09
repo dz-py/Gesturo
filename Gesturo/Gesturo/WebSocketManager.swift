@@ -3,8 +3,15 @@ import Combine
 
 class WebSocketManager: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
-    private let url = URL(string: "ws://169.254.206.14:5007")!
+    private let url: URL
     private let encoder = JSONEncoder()
+    
+    init() {
+        guard let url = URL(string: Config.wsURL) else {
+            fatalError("Invalid WS_URL format")
+        }
+        self.url = url
+    }
     
     enum GestureType: String, Codable {
         case move

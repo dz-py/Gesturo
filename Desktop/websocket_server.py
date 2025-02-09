@@ -42,17 +42,18 @@ class WebSocketServer:
             receive_time = time.time() * 1000  
             data = ujson.loads(message)
             
-            # if isinstance(data, list):
-            #     for movement in data:
-            #         if 'sendTime' in movement:
-            #             latency = receive_time - movement['sendTime']
-            #             print(f"Message latency: {latency:.2f}ms")
-            #         await self.handle_gesture(movement)
-            # elif isinstance(data, dict):
-            #     if 'sendTime' in data:
-            #         latency = receive_time - data['sendTime']
-            #         print(f"Message latency: {latency:.2f}ms")
-            #     await self.handle_gesture(data)
+            # uncomment to measure message latency
+            if isinstance(data, list):
+                for movement in data:
+                    # if 'sendTime' in movement:
+                    #     latency = receive_time - movement['sendTime']
+                    #     print(f"Message latency: {latency:.2f}ms")
+                    await self.handle_gesture(movement)
+            elif isinstance(data, dict):
+                # if 'sendTime' in data:
+                #     latency = receive_time - data['sendTime']
+                #     print(f"Message latency: {latency:.2f}ms")
+                await self.handle_gesture(data)
                         
         except (ValueError, KeyError, TypeError) as e:
             print(f"Error processing message: {e}")

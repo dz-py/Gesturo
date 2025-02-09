@@ -4,8 +4,10 @@ Gesturo/Gesturo/Base.lproj/
 Gesturo/Gesturo/Info.plist
 Gesturo/Gesturo.xcodeproj/
 Gesturo/.DS_Store
+Gesturo/Gesturo/config.json/
 .gitignore
 venv/ 
 .env/
 __pychache__/
 .DS_Store
+
