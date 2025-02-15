@@ -2,7 +2,7 @@
 
 # Gesturo: Wireless Touchpad Application
 
-Gesturo is an iOS application that allows you to control your computer's cursor through gestures made on your IOS device. It enables you to perform touchpad actions such as left and right clicks, scrolling, and cursor movements.
+Gesturo is an iOS application that allows you to control your computer's cursor through gestures made on your iOS device. It enables you to perform touchpad actions such as left and right clicks, scrolling, and cursor movements.
 
 ## Motivation
 
